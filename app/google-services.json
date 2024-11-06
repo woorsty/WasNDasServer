@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "472027888828",
+    "project_id": "wasndas-e72b6",
+    "storage_bucket": "wasndas-e72b6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:472027888828:android:dc35edbe3112b79d8ba4b9",
+        "android_client_info": {
+          "package_name": "de.dennis.wasndas"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBH49EJATQSII8L2gNWzx3UYRimkVxhkw0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:472027888828:android:7abae9ef57e06eaf8ba4b9",
+        "android_client_info": {
+          "package_name": "de.dennis.wasndasmeins"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBH49EJATQSII8L2gNWzx3UYRimkVxhkw0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
