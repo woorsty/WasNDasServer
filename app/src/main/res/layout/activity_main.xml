@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <TextView
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text="token"
+        android:textSize="18sp"
+        android:id="@+id/tokenView" />
+
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="wrap_content"

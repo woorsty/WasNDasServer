@@ -22,10 +22,11 @@ import okhttp3.Response;
 
 public class API {
     private static final OkHttpClient client = new OkHttpClient();
-    private static final String baseUrl = "http://192.168.178.152:3000";
+    private static final String baseUrl = "http://100.87.183.69:3000";
 
-    public static void sendTokenToAPI(String token) {
-
+    public static void sendTokenToAPI(MainActivity context, String token) {
+        String endpoint = baseUrl + "/token/" + token;
+        sendGet(context, endpoint);
     }
 
     public static void sendAnswer(MainActivity context, boolean ok, String filename) {

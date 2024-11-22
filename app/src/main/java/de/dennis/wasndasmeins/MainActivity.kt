@@ -11,6 +11,7 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.Text
@@ -32,6 +33,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val tokenView: TextView = findViewById(R.id.tokenView)
+
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (!task.isSuccessful) {
                 Log.w("FCM Token", "Fetching FCM registration token failed", task.exception)
@@ -41,9 +45,13 @@ class MainActivity : ComponentActivity() {
             // Get the FCM token
             val token = task.result
 
+            tokenView.text = token
+
             // Log and show the token
             Log.d("FCM Token", "FCM Token: $token")
             // You can send the token to your server here
+
+            API.sendTokenToAPI(this, token)
         }
 
         val imageUrl = intent.getStringExtra("imageUrl")
@@ -62,7 +70,6 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-
         okButton = findViewById(R.id.ok_button);
         okButton.setOnClickListener { API.sendAnswer(this, true, currentImage.filename) }
         okButton.visibility = INVISIBLE;
@@ -70,7 +77,9 @@ class MainActivity : ComponentActivity() {
         nopeButton.setOnClickListener { API.sendAnswer(this, false, currentImage.filename) }
         nopeButton.visibility = INVISIBLE;
         val refreshButton: Button = findViewById(R.id.refresh_button)
-        refreshButton.setOnClickListener { API.getLatestImageUrl(this) }
+        refreshButton.setOnClickListener {
+            API.getLatestImageUrl(this)
+        }
 
         // Lade das Bild mit Glide in das ImageView
         if (imageUrl != null) {
@@ -91,22 +100,24 @@ class MainActivity : ComponentActivity() {
     }
 
     fun showImage(image: Image) {
-        val imageView: ImageView = findViewById(R.id.imageView)
-        val handler = Handler(Looper.getMainLooper())
-        handler.post {
-            Glide.with(this)
-                .load(image.imageUrl)
-                .into(imageView)
-        }
-        if (image.isDone) {
-            okButton.visibility = INVISIBLE;
-            nopeButton.visibility = INVISIBLE;
-        } else {
-            okButton.visibility = VISIBLE;
-            nopeButton.visibility = VISIBLE;
-        }
+        runOnUiThread {
+            val imageView: ImageView = findViewById(R.id.imageView)
+            val handler = Handler(Looper.getMainLooper())
+            handler.post {
+                Glide.with(this)
+                    .load(image.imageUrl)
+                    .into(imageView)
+            }
+            if (image.isDone) {
+                okButton.visibility = INVISIBLE;
+                nopeButton.visibility = INVISIBLE;
+            } else {
+                okButton.visibility = VISIBLE;
+                nopeButton.visibility = VISIBLE;
+            }
 
-        currentImage = image
+            currentImage = image
+        }
     }
 }
 
