@@ -31,13 +31,50 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         if (!remoteMessage.getData().isEmpty()) {
             String imageUrl = remoteMessage.getData().get("imageUrl"); // Bild-URL von der Nachricht
-            sendNotification(imageUrl);
+            if (imageUrl.equals("Fertig")) {
+                sendFinishNotification();
+            } else if (imageUrl != null) {
+                sendNotification(imageUrl);
+            }
         }
     }
 
     @Override
     public void onNewToken(@NonNull String token) {
         Log.d("Tag", "New Token: " + token);
+    }
+
+    private void sendFinishNotification() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("finish", true);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
+                                                                PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this,
+                                                                                        "default_channel")
+                .setSmallIcon(R.drawable.ic_notification)  // Benachrichtigungssymbol
+                .setContentTitle("Fertig")
+                .setContentText("Fertig")
+//                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setSound(defaultSoundUri)
+                .setContentIntent(pendingIntent);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(
+                getApplicationContext());
+        // Android 8.0 und höher benötigen einen Notification-Channel
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String channelId = "default_channel";
+            String channelName = "Default Channel";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel notificationChannel = new NotificationChannel(channelId,
+                                                                              channelName,
+                                                                              importance);
+
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
+
+        notificationManager.notify(0, notificationBuilder.build());
     }
 
     private void sendNotification(String imageUrl) {
@@ -69,8 +106,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 );
             }
         }
-
-//        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(
                 getApplicationContext());

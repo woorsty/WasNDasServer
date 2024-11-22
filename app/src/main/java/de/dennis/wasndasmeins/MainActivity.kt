@@ -53,9 +53,6 @@ class MainActivity : ComponentActivity() {
 
             API.sendTokenToAPI(this, token)
         }
-
-        val imageUrl = intent.getStringExtra("imageUrl")
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ActivityCompat.checkSelfPermission(
                     this,
@@ -81,15 +78,21 @@ class MainActivity : ComponentActivity() {
             API.getLatestImageUrl(this)
         }
 
-        // Lade das Bild mit Glide in das ImageView
-        if (imageUrl != null) {
-            currentImage = Image()
-            currentImage.imageUrl = imageUrl
-            currentImage.isDone = false
-            showImage(currentImage)
+        val imageUrl = intent.getStringExtra(null)
+        if (imageUrl == null) {
+            // Lade das Bild mit Glide in das ImageView
+            if (imageUrl != null) {
+                currentImage = Image()
+                currentImage.imageUrl = imageUrl
+                currentImage.isDone = false
+                showImage(currentImage)
+            }
+            API.getLatestImageUrl(this);
+        } else {
+            if (intent.getBooleanExtra("finish", false)) {
+                showToast("Fertig")
+            }
         }
-
-        API.getLatestImageUrl(this);
     }
 
     fun showToast(text: String) {
