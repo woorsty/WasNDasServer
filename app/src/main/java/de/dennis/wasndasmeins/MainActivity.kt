@@ -26,6 +26,7 @@ import de.dennis.wasndasmeins.model.Image
 import de.dennis.wasndasmeins.ui.theme.WasNDasMeinsTheme
 
 class MainActivity : ComponentActivity() {
+    private lateinit var tokenView: TextView
     private lateinit var currentImage: Image
     private lateinit var okButton: Button
     private lateinit var nopeButton: Button
@@ -34,7 +35,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val tokenView: TextView = findViewById(R.id.tokenView)
+        tokenView = findViewById(R.id.tokenView)
 
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (!task.isSuccessful) {
@@ -81,12 +82,6 @@ class MainActivity : ComponentActivity() {
         val imageUrl = intent.getStringExtra(null)
         if (imageUrl == null) {
             // Lade das Bild mit Glide in das ImageView
-            if (imageUrl != null) {
-                currentImage = Image()
-                currentImage.imageUrl = imageUrl
-                currentImage.isDone = false
-                showImage(currentImage)
-            }
             API.getLatestImageUrl(this);
         } else {
             if (intent.getBooleanExtra("finish", false)) {
@@ -98,6 +93,7 @@ class MainActivity : ComponentActivity() {
     fun showToast(text: String) {
         // Fehler bei der Antwort
         runOnUiThread {
+            tokenView.text = text
             Toast.makeText(this, text, Toast.LENGTH_LONG).show()
         }
     }

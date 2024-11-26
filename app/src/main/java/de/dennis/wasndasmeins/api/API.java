@@ -22,7 +22,7 @@ import okhttp3.Response;
 
 public class API {
     private static final OkHttpClient client = new OkHttpClient();
-    private static final String baseUrl = "http://100.87.183.69:3000";
+    private static final String baseUrl = "http://[2a00:6020:4e9f:f600:ac3a:b0c4:1f0b:55c]:3000";
 
     public static void sendTokenToAPI(MainActivity context, String token) {
         String endpoint = baseUrl + "/token/" + token;
@@ -51,7 +51,7 @@ public class API {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();
-                context.showToast("Kein Bild gefunden");
+                context.showToast("Kein Bild gefunden: " + e.getMessage());
             }
 
             @Override
