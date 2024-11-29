@@ -22,8 +22,13 @@ import androidx.core.app.ActivityCompat
 import com.bumptech.glide.Glide
 import com.google.firebase.messaging.FirebaseMessaging
 import de.dennis.wasndasmeins.api.API
+import de.dennis.wasndasmeins.glide.IPv6UrlLoaderFactory
 import de.dennis.wasndasmeins.model.Image
 import de.dennis.wasndasmeins.ui.theme.WasNDasMeinsTheme
+import java.io.InputStream
+import java.net.URI
+import java.net.URLDecoder
+
 
 class MainActivity : ComponentActivity() {
     private lateinit var tokenView: TextView
@@ -34,6 +39,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        Glide.with(this)
+        Glide.get(this).registry.replace<String, InputStream>(
+            String::class.java,
+            InputStream::class.java,
+            IPv6UrlLoaderFactory()
+        )
+
 
         tokenView = findViewById(R.id.tokenView)
 
@@ -81,7 +94,6 @@ class MainActivity : ComponentActivity() {
 
         val imageUrl = intent.getStringExtra(null)
         if (imageUrl == null) {
-            // Lade das Bild mit Glide in das ImageView
             API.getLatestImageUrl(this);
         } else {
             if (intent.getBooleanExtra("finish", false)) {
@@ -100,22 +112,31 @@ class MainActivity : ComponentActivity() {
 
     fun showImage(image: Image) {
         runOnUiThread {
-            val imageView: ImageView = findViewById(R.id.imageView)
-            val handler = Handler(Looper.getMainLooper())
-            handler.post {
-                Glide.with(this)
-                    .load(image.imageUrl)
-                    .into(imageView)
-            }
-            if (image.isDone) {
-                okButton.visibility = INVISIBLE;
-                nopeButton.visibility = INVISIBLE;
-            } else {
-                okButton.visibility = VISIBLE;
-                nopeButton.visibility = VISIBLE;
-            }
+            try {
+                val imageView: ImageView = findViewById(R.id.imageView)
+                val handler = Handler(Looper.getMainLooper())
+                
+                val utf8 = URLDecoder.decode(image.imageUrl, "UTF-8");
+                val uri = URI(utf8)
+                val url = uri.toASCIIString() // URL in ein Glide-kompatibles Format konvertieren
 
-            currentImage = image
+                Glide.with(this)
+                    .load(url)
+                    .into(imageView)
+                handler.post {
+                }
+                if (image.isDone) {
+                    okButton.visibility = INVISIBLE;
+                    nopeButton.visibility = INVISIBLE;
+                } else {
+                    okButton.visibility = VISIBLE;
+                    nopeButton.visibility = VISIBLE;
+                }
+
+                currentImage = image
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 }

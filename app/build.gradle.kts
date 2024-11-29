@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.firebase.messaging.ktx)
     implementation(libs.github.glide)
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
 
     implementation("androidx.multidex:multidex:2.0.1")
     implementation(libs.androidx.constraintlayout)
